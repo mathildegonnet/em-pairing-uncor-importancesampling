@@ -1,33 +1,32 @@
-% Copyright 2018 - 2020, MIT Lincoln Laboratory
-% SPDX-License-Identifier: X11
-%%
 classdef ScriptedEncounter
-    %SCRIPTEDENCOUNTER An encounter between one or more aircraft
+    % Copyright 2018 - 2022, MIT Lincoln Laboratory
+    % SPDX-License-Identifier: X11
+    % SCRIPTEDENCOUNTER An encounter between one or more aircraft
     %   The initial geometry and subsequent controls of a scripted
     %   encounter between two or more aircraft
     
     properties
-        id
-        numberOfAircraft
+        id(1,1) double {mustBeInteger, mustBeNonnegative, mustBeFinite};
+        numberOfAircraft(1,1) double {mustBeInteger, mustBeNonnegative, mustBeFinite};
         
         % Initial quantities - Vectors of length this.numberOfAircraft
         
-        v_ftps @double     % Initial true airspeed
-        n_ft   @double     % Initial north coordinate
-        e_ft   @double     % Initial east coordinate
-        h_ft   @double     % Initial altitude AGL
-        heading_rad @double% Initial heading, clockwise of True North
-        pitch_rad   @double% Initial pitch angle
-        bank_rad     @double% Initial bank angle
-        a_ftpss     @double% Initial longitudinal acceleration
-      
+        v_ftps(:,:) double {mustBeReal}     % Initial true airspeed
+        n_ft(:,:) double {mustBeReal}     % Initial north coordinate
+        e_ft(:,:) double {mustBeReal}     % Initial east coordinate
+        h_ft(:,:) double {mustBeReal}     % Initial altitude AGL
+        heading_rad (:,:) double {mustBeReal} % Initial heading, clockwise of True North
+        pitch_rad(:,:) double {mustBeReal}% Initial pitch angle
+        bank_rad  (:,:) double {mustBeReal}% Initial bank angle
+        a_ftpss  (:,:) double {mustBeReal}% Initial longitudinal acceleration
+        
         % Subsequent controls
         
-        updates @ EncounterModelEvents % Array of length this.numberOfAircraft of EncounterModelEvents objects
-   
+        updates(:,:) EncounterModelEvents {}% Array of length this.numberOfAircraft of EncounterModelEvents objects
+        
         % Metadata
-        runTime_s @double; % Duration of encounter
-        altLayer @double; % Altitude layer are 500-1200, 1200-3000, 3000-5000, 5000-18000 for uncorrelated model
+        runTime_s(1,1) double {mustBeNonnegative, mustBeFinite}; % Duration of encounter
+        altLayer(:,:) double {mustBeReal}; % Altitude layer could consist of 50-500, 500-1200, 1200-3000, 3000-5000, 5000-18000 for uncorrelated models
         
     end
     
@@ -51,7 +50,7 @@ classdef ScriptedEncounter
                     this.pitch_rad(k)   = initial.( [ 'theta' num2str(k) '_rad' ] );
                     this.bank_rad(k)   = initial.( [ 'phi' num2str(k) '_rad' ] );
                     this.a_ftpss(k)    = initial.( [ 'a' num2str(k) '_ftpss' ] );
-
+                    
                     this.updates(k)  = EncounterModelEvents( 'event', varargin{k} );
                 end
             end
